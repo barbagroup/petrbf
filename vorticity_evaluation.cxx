@@ -1,5 +1,5 @@
 PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec gj,
-  double sigma, double overlap, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
+  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {
   int i,*isort,ievent[10];
   double ximin,ximax,yimin,yimax,xjmin,xjmax,yjmin,yjmax;
@@ -145,8 +145,8 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
     &particle.xj);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.yi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.wi);CHKERRQ(ierr);
-  ierr = VecDuplicate(particle.xi,&particle.yj);CHKERRQ(ierr);
-  ierr = VecDuplicate(particle.xi,&particle.gj);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xj,&particle.yj);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xj,&particle.gj);CHKERRQ(ierr);
   ierr = ISCreateStride(PETSC_COMM_WORLD,particle.nilocal,particle.ista,1,&isy);CHKERRQ(ierr);
   ierr = ISCreateStride(PETSC_COMM_WORLD,particle.njlocal,particle.jsta,1,&jsy);CHKERRQ(ierr);
   ierr = VecScatterCreate(xi,isx,particle.xi,isy,&ctx);CHKERRQ(ierr);

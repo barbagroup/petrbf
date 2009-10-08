@@ -32,7 +32,7 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
         dx = particle->xil[i]-cluster->xjt[j];
         dy = particle->yil[i]-cluster->yjt[j];
         w += cluster->gjt[j]*exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
-          (2*pi*particle->sigma*particle->sigma);
+          (2*M_PI*particle->sigma*particle->sigma);
       }
       ay[il-particle->ista] = w;
     }
@@ -82,7 +82,7 @@ PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatRe
           dx = cluster->xib[i]-cluster->xib[j];
           dy = cluster->yib[i]-cluster->yib[j];
           A[i*cluster->npbufferi+j] = exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
-            (2*pi*particle->sigma*particle->sigma);
+            (2*M_PI*particle->sigma*particle->sigma);
         }
         idx[i] = i;
       }

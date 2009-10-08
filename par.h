@@ -148,5 +148,4 @@ PARTICLE *p;
 CLUSTER *c;
 };
 
-double pi=M_PI;
 double epsf=1e-6;

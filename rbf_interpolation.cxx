@@ -1,5 +1,5 @@
 PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
-  double sigma, double overlap, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
+  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {
   int i,ic,id,ista,iend,*isort,ievent[10];
   std::ofstream fid0,fid1;
