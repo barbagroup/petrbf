@@ -22,7 +22,6 @@
 int main(int argc,char **argv)
 {
   int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,ni,nj,ista,iend,nlocal;
-  double epsf=1e-6;
   double sigma,overlap,h,xmin,xmax,ymin,ymax,xd,yd,gd,ed,wd,t,err,errd;
   clock_t tic,toc;
   tic = std::clock();
@@ -127,9 +126,9 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,w,x,y,g,sigma,overlap,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  rbf_interpolation(x,y,g,e,w,sigma,overlap,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  vorticity_evaluation(x,y,w,x,y,g,sigma,overlap,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  rbf_interpolation(x,y,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
 
   /*
     calculate the L2 norm error

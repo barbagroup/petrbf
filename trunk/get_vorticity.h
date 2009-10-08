@@ -16,7 +16,7 @@ public:
           dx = particle->xil[i]-cluster->xjt[j];
           dy = particle->yil[i]-cluster->yjt[j];
           w += cluster->gjt[j]*exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
-            (2*pi*particle->sigma*particle->sigma);
+            (2*M_PI*particle->sigma*particle->sigma);
         }
         particle->wil[i] = w;
       }

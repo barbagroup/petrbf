@@ -9,6 +9,6 @@ purge:
 	$(RM) *.dat *.o main cylinder
 save:
 	make purge
-	tar zcvf ../PetRBF.tgz ../PetRBF
+	tar zcvf ../rbf.tgz ../rbf
 
 include $(PETSC_DIR)/conf/base
