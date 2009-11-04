@@ -1,7 +1,7 @@
 PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
 {
   int i,j,ic,il,ista,iend;
-  double dx,dy,w;
+  double dx,dy,dz,w;
   PetscScalar *ax,*ay;
   PetscErrorCode ierr;
   BOTH *both;
@@ -31,7 +31,8 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
       for (j=0; j<cluster->nptruncj; j++) {
         dx = particle->xil[i]-cluster->xjt[j];
         dy = particle->yil[i]-cluster->yjt[j];
-        w += cluster->gjt[j]*exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
+        dz = particle->zil[i]-cluster->zjt[j];
+        w += cluster->gjt[j]*exp(-(dx*dx+dy*dy+dz*dz)/(2*particle->sigma*particle->sigma))/
           (2*M_PI*particle->sigma*particle->sigma);
       }
       ay[il-particle->ista] = w;
@@ -48,7 +49,7 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
 PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatReuse scall,Mat *submat[])
 {
   int i,ic,id,j,ista,iend;
-  double dx,dy;
+  double dx,dy,dz;
   PetscInt *idx;
   PetscScalar *A;
   PetscErrorCode ierr;
@@ -81,7 +82,8 @@ PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatRe
         for (j=0; j<cluster->npbufferi; j++) {
           dx = cluster->xib[i]-cluster->xib[j];
           dy = cluster->yib[i]-cluster->yib[j];
-          A[i*cluster->npbufferi+j] = exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
+          dz = cluster->zib[i]-cluster->zib[j];
+          A[i*cluster->npbufferi+j] = exp(-(dx*dx+dy*dy+dz*dz)/(2*particle->sigma*particle->sigma))/
             (2*M_PI*particle->sigma*particle->sigma);
         }
         idx[i] = i;

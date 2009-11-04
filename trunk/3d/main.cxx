@@ -21,8 +21,8 @@
 
 int main(int argc,char **argv)
 {
-  int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,ni,nj,ista,iend,nlocal;
-  double sigma,overlap,h,xmin,xmax,ymin,ymax,xd,yd,gd,ed,wd,t,err,errd;
+  int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,nz,ni,nj,ista,iend,nlocal;
+  double sigma,overlap,h,xmin,xmax,ymin,ymax,zmin,zmax,xd,yd,zd,gd,ed,wd,t,err,errd;
   clock_t tic,toc;
   tic = std::clock();
 
@@ -31,7 +31,7 @@ int main(int argc,char **argv)
   MPI2 mpi;
 
   PetscErrorCode ierr;
-  Vec x,y,g,e,w;
+  Vec x,y,z,g,e,w;
 
   PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
   MPI_Comm_size(PETSC_COMM_WORLD,&mpi.nprocs);
@@ -46,13 +46,15 @@ int main(int argc,char **argv)
   /*
     particle parameters
   */
-  sigma = 0.005;
+  sigma = 0.1;
   overlap = atof(argv[1]);
   h = overlap*sigma;
-  xmin = 0;
+  xmin = -1;
   xmax = 1;
-  ymin = 0;
+  ymin = -1;
   ymax = 1;
+  zmin = -1;
+  zmax = 1;
 
   /*
     cluster parameters
@@ -70,7 +72,8 @@ int main(int argc,char **argv)
   */
   nx = (int)floor((xmax-xmin+epsf)/h)+1;
   ny = (int)floor((ymax-ymin+epsf)/h)+1;
-  ni = nx*ny;
+  nz = (int)floor((zmax-zmin+epsf)/h)+1;
+  ni = nx*ny*nz;
   if(mpi.myrank==0) {
     printf("||---------------------------------------\n");
     printf("|| number of particles        : %d      \n",ni);
@@ -90,27 +93,26 @@ int main(int argc,char **argv)
   ierr = VecSetSizes(x,PETSC_DECIDE,ni);CHKERRQ(ierr);
   ierr = VecSetFromOptions(x);CHKERRQ(ierr);
   ierr = VecDuplicate(x,&y);CHKERRQ(ierr);
+  ierr = VecDuplicate(x,&z);CHKERRQ(ierr);
   ierr = VecDuplicate(x,&g);CHKERRQ(ierr);
   ierr = VecDuplicate(x,&e);CHKERRQ(ierr);
   ierr = VecDuplicate(x,&w);CHKERRQ(ierr);
   ierr = VecGetOwnershipRange(x,&ista,&iend);CHKERRQ(ierr);
   nlocal = iend-ista;
   for(i=ista; i<iend; i++) {
-    xd = xmin+floor(i/ny)*h;
+    xd = xmin+floor((i%(nx*ny))/ny)*h;
     yd = ymin+(i%ny)*h;
+    zd = zmin+floor(i/(nx*ny))*h;
 //    ed = (float)rand()/RAND_MAX;
 //    xd = xd*nx/(nx+1)+ed*h/2;
 //    ed = (float)rand()/RAND_MAX;
 //    yd = yd*ny/(ny+1)+ed*h/2;
-//    ed = exp(-(xd*xd+yd*yd)/(4*parameter.vis*parameter.t))/(pi*4*parameter.vis*parameter.t);
-    ed = 0.75*exp(-((9*xd-2)*(9*xd-2)+(9*yd-2)*(9*yd))/4)
-      +0.75*exp(-((9*xd+1)*(9*xd+1))/49-((9*yd+1)*(9*yd+1))/10)
-      +0.5*exp(-((9*xd-7)*(9*xd-7)+(9*yd-3)*(9*yd-3))/4)
-      -0.2*exp(-(9*xd-4)*(9*xd-4)-(9*yd-7)*(9*yd-7));
+    ed = exp(-(xd*xd+yd*yd+zd*zd)/(4*parameter.vis*parameter.t))/(M_PI*4*parameter.vis*parameter.t);
     wd = ed;
     gd = ed*h*h;
     ierr = VecSetValues(x,1,&i,&xd,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(y,1,&i,&yd,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = VecSetValues(z,1,&i,&zd,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(g,1,&i,&gd,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(e,1,&i,&ed,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(w,1,&i,&wd,INSERT_VALUES);CHKERRQ(ierr);
@@ -119,6 +121,8 @@ int main(int argc,char **argv)
   ierr = VecAssemblyEnd(x);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(y);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(y);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(z);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(z);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(g);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(g);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(e);CHKERRQ(ierr);
@@ -126,9 +130,9 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  rbf_interpolation(x,y,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  rbf_interpolation(x,y,z,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
 
   /*
     calculate the L2 norm error
