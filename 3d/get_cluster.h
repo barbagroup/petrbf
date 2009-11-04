@@ -1,6 +1,7 @@
 class Get_cluster
 {
-  int n,ic,id,io,ip,ix,iy,ista,iend,ix_cluster,iy_cluster,j,jc,jd,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;
+  int n,ic,id,io,ip,ix,iy,iz,ista,iend,ix_cluster,iy_cluster,iz_cluster;
+  int j,jc,jd,jsta,jend,jx,jy,jz,jx_min,jx_max,jy_min,jy_max,jz_min,jz_max;
   int icall,ncall,nilocal,njlocal,*iplocal,*jplocal,*ipglobal,*jpglobal,*ipoffset,*jpoffset,*idghost;
   double sort;
   MPI2 mpi;
@@ -23,6 +24,8 @@ public:
     cluster->xmax = particle->xmax+epsf;
     cluster->ymin = particle->ymin-epsf;
     cluster->ymax = particle->ymax+epsf;
+    cluster->zmin = particle->zmin-epsf;
+    cluster->zmax = particle->zmax+epsf;
     cluster->box_length = cluster->nsigma_box*particle->sigma+epsf;
 
     /*
@@ -30,7 +33,8 @@ public:
     */
     cluster->nx = (int)ceil((cluster->xmax-cluster->xmin)/cluster->box_length);
     cluster->ny = (int)ceil((cluster->ymax-cluster->ymin)/cluster->box_length);
-    cluster->n = cluster->nx*cluster->ny;
+    cluster->nz = (int)ceil((cluster->zmax-cluster->zmin)/cluster->box_length);
+    cluster->n = cluster->nx*cluster->ny*cluster->nz;
 
     /*
       allocate arrays
@@ -41,8 +45,10 @@ public:
     cluster->jend = new int [cluster->n];
     cluster->ix = new int [cluster->n];
     cluster->iy = new int [cluster->n];
+    cluster->iz = new int [cluster->n];
     cluster->xc = new double [cluster->n];
     cluster->yc = new double [cluster->n];
+    cluster->zc = new double [cluster->n];
 
     iplocal = new int [cluster->n];
     jplocal = new int [cluster->n];
@@ -56,21 +62,25 @@ public:
       calculate the x, y index and coordinates of the center
     */
     ic = -1;
-    for (ix=0; ix<cluster->nx; ix++) {
-      for (iy=0; iy<cluster->ny; iy++) {
-        ic++;
-        cluster->ix[ic] = ix;
-        cluster->iy[ic] = iy;
-        cluster->xc[ic] = cluster->xmin+(ix+0.5)*cluster->box_length;
-        cluster->yc[ic] = cluster->ymin+(iy+0.5)*cluster->box_length;
-        cluster->ista[ic] = 0;
-        cluster->iend[ic] = -1;
-        cluster->jsta[ic] = 0;
-        cluster->jend[ic] = -1;
-        iplocal[ic] = 0;
-        jplocal[ic] = 0;
-        ipoffset[ic] = 0;
-        jpoffset[ic] = 0;
+    for (iz=0; iz<cluster->nz; iz++) {
+      for (ix=0; ix<cluster->nx; ix++) {
+        for (iy=0; iy<cluster->ny; iy++) {
+          ic++;
+          cluster->ix[ic] = ix;
+          cluster->iy[ic] = iy;
+          cluster->iz[ic] = iz;
+          cluster->xc[ic] = cluster->xmin+(ix+0.5)*cluster->box_length;
+          cluster->yc[ic] = cluster->ymin+(iy+0.5)*cluster->box_length;
+          cluster->zc[ic] = cluster->zmin+(iz+0.5)*cluster->box_length;
+          cluster->ista[ic] = 0;
+          cluster->iend[ic] = -1;
+          cluster->jsta[ic] = 0;
+          cluster->jend[ic] = -1;
+          iplocal[ic] = 0;
+          jplocal[ic] = 0;
+          ipoffset[ic] = 0;
+          jpoffset[ic] = 0;
+        }
       }
     }
 
@@ -80,13 +90,15 @@ public:
     for (ip=0; ip<particle->nilocal; ip++) {
       ix_cluster = (int)floor((particle->xil[ip]-cluster->xmin)/cluster->box_length);
       iy_cluster = (int)floor((particle->yil[ip]-cluster->ymin)/cluster->box_length);
-      ic = ix_cluster*cluster->ny+iy_cluster;
+      iz_cluster = (int)floor((particle->zil[ip]-cluster->zmin)/cluster->box_length);
+      ic = iz_cluster*cluster->nx*cluster->ny+ix_cluster*cluster->ny+iy_cluster;
       iplocal[ic]++;
     }
     for (ip=0; ip<particle->njlocal; ip++) {
       ix_cluster = (int)floor((particle->xjl[ip]-cluster->xmin)/cluster->box_length);
       iy_cluster = (int)floor((particle->yjl[ip]-cluster->ymin)/cluster->box_length);
-      ic = ix_cluster*cluster->ny+iy_cluster;
+      iz_cluster = (int)floor((particle->zjl[ip]-cluster->zmin)/cluster->box_length);
+      ic = iz_cluster*cluster->nx*cluster->ny+ix_cluster*cluster->ny+iy_cluster;
       jplocal[ic]++;
     }
 
@@ -125,7 +137,8 @@ public:
     for (ip=0; ip<particle->nilocal; ip++) {
       ix_cluster = (int)floor((particle->xil[ip]-cluster->xmin)/cluster->box_length);
       iy_cluster = (int)floor((particle->yil[ip]-cluster->ymin)/cluster->box_length);
-      ic = ix_cluster*cluster->ny+iy_cluster;
+      iz_cluster = (int)floor((particle->zil[ip]-cluster->zmin)/cluster->box_length);
+      ic = iz_cluster*cluster->nx*cluster->ny+ix_cluster*cluster->ny+iy_cluster;
       sort = ip+particle->ista;
       VecSetValues(particle->ii,1,&ipoffset[ic],&sort,INSERT_VALUES);
       ipoffset[ic]++;
@@ -133,7 +146,8 @@ public:
     for (ip=0; ip<particle->njlocal; ip++) {
       ix_cluster = (int)floor((particle->xjl[ip]-cluster->xmin)/cluster->box_length);
       iy_cluster = (int)floor((particle->yjl[ip]-cluster->ymin)/cluster->box_length);
-      ic = ix_cluster*cluster->ny+iy_cluster;
+      iz_cluster = (int)floor((particle->zjl[ip]-cluster->zmin)/cluster->box_length);
+      ic = iz_cluster*cluster->nx*cluster->ny+ix_cluster*cluster->ny+iy_cluster;
       sort = ip+particle->jsta;
       VecSetValues(particle->jj,1,&jpoffset[ic],&sort,INSERT_VALUES);
       jpoffset[ic]++;
@@ -179,16 +193,21 @@ public:
     for (ic=cluster->icsta; ic<cluster->icend; ic++) {
       ix = cluster->ix[ic];
       iy = cluster->iy[ic];
+      iz = cluster->iz[ic];
       jx_min = std::max(0,ix-cluster->neighbor_ghost);
       jx_max = std::min(cluster->nx-1,ix+cluster->neighbor_ghost);
       jy_min = std::max(0,iy-cluster->neighbor_ghost);
       jy_max = std::min(cluster->ny-1,iy+cluster->neighbor_ghost);
+      jz_min = std::max(0,iz-cluster->neighbor_ghost);
+      jz_max = std::min(cluster->nz-1,iz+cluster->neighbor_ghost);
       for (jx=jx_min; jx<=jx_max; jx++) {
         for (jy=jy_min; jy<=jy_max; jy++) {
-          jc = jx*cluster->ny+jy;
-          if (idghost[jc] == 0) {
-            idghost[jc] = 2;
-            cluster->ncghost++;
+          for (jz=jz_min; jz<=jz_max; jz++) {
+            jc = jz*cluster->nx*cluster->ny+jx*cluster->ny+jy;
+            if (idghost[jc] == 0) {
+              idghost[jc] = 2;
+              cluster->ncghost++;
+            }
           }
         }
       }
@@ -272,11 +291,13 @@ public:
     cluster->idx = new int [cluster->maxbuffer];
     cluster->xib = new double [cluster->maxbuffer];
     cluster->yib = new double [cluster->maxbuffer];
+    cluster->zib = new double [cluster->maxbuffer];
     cluster->gib = new double [cluster->maxbuffer];
     cluster->eib = new double [cluster->maxbuffer];
     cluster->wib = new double [cluster->maxbuffer];
     cluster->xjt = new double [cluster->maxtrunc];
     cluster->yjt = new double [cluster->maxtrunc];
+    cluster->zjt = new double [cluster->maxtrunc];
     cluster->gjt = new double [cluster->maxtrunc];
   }
 };

@@ -1,7 +1,7 @@
 class Get_vorticity
 {
   int i,j,ic,il,ista,iend;
-  double w,dx,dy;
+  double w,dx,dy,dz;
 public:
   void get_vorticity(PARTICLE *particle,CLUSTER *cluster)
   {
@@ -15,7 +15,8 @@ public:
         for (j=0; j<cluster->nptruncj; j++) {
           dx = particle->xil[i]-cluster->xjt[j];
           dy = particle->yil[i]-cluster->yjt[j];
-          w += cluster->gjt[j]*exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
+          dz = particle->zil[i]-cluster->zjt[j];
+          w += cluster->gjt[j]*exp(-(dx*dx+dy*dy+dz*dz)/(2*particle->sigma*particle->sigma))/
             (2*M_PI*particle->sigma*particle->sigma);
         }
         particle->wil[i] = w;
