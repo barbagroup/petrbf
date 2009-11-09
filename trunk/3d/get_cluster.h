@@ -105,10 +105,10 @@ public:
     /*
       communicate and find global box offset (cluster->ista) and local box offset (ipoffset)
     */
-    MPI_Exscan(iplocal,ipoffset,cluster->n,MPI_INTEGER,MPI_SUM,PETSC_COMM_WORLD);
-    MPI_Exscan(jplocal,jpoffset,cluster->n,MPI_INTEGER,MPI_SUM,PETSC_COMM_WORLD);
-    MPI_Allreduce(iplocal,ipglobal,cluster->n,MPI_INTEGER,MPI_SUM,PETSC_COMM_WORLD);
-    MPI_Allreduce(jplocal,jpglobal,cluster->n,MPI_INTEGER,MPI_SUM,PETSC_COMM_WORLD);
+    MPI_Exscan(iplocal,ipoffset,cluster->n,MPI_INT,MPI_SUM,PETSC_COMM_WORLD);
+    MPI_Exscan(jplocal,jpoffset,cluster->n,MPI_INT,MPI_SUM,PETSC_COMM_WORLD);
+    MPI_Allreduce(iplocal,ipglobal,cluster->n,MPI_INT,MPI_SUM,PETSC_COMM_WORLD);
+    MPI_Allreduce(jplocal,jpglobal,cluster->n,MPI_INT,MPI_SUM,PETSC_COMM_WORLD);
     id = 0;
     jd = 0;
     for (ic=0; ic<cluster->n; ic++) {
