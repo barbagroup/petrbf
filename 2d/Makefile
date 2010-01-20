@@ -1,6 +1,10 @@
 main: main.o
 	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
 	$(PETSC_DIR)/$(PETSC_ARCH)/bin/mpiexec -np $(NP) ./main .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
+main2: main2.o
+	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
+	$(PETSC_DIR)/$(PETSC_ARCH)/bin/mpiexec -np $(NP) ./main2 .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
+	$(RM) *.o
 cylinder: cylinder.o
 	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
 	$(PETSC_DIR)/$(PETSC_ARCH)/bin/mpiexec -np $(NP) ./cylinder .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
@@ -11,4 +15,5 @@ save:
 	make purge
 	tar zcvf ../rbf.tgz ../rbf
 
-include $(PETSC_DIR)/conf/base
+include ${PETSC_DIR}/conf/variables
+include ${PETSC_DIR}/conf/rules

@@ -76,9 +76,9 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecGetArray(xi,&particle.xil);CHKERRQ(ierr);
   ierr = VecGetArray(yi,&particle.yil);CHKERRQ(ierr);
   ierr = VecGetArray(zi,&particle.zil);CHKERRQ(ierr);
-  ierr = VecGetArray(xi,&particle.xjl);CHKERRQ(ierr);
-  ierr = VecGetArray(yi,&particle.yjl);CHKERRQ(ierr);
-  ierr = VecGetArray(zi,&particle.zjl);CHKERRQ(ierr);
+  ierr = VecGetArray(xj,&particle.xjl);CHKERRQ(ierr);
+  ierr = VecGetArray(yj,&particle.yjl);CHKERRQ(ierr);
+  ierr = VecGetArray(zj,&particle.zjl);CHKERRQ(ierr);
 
   Get_cluster clusters;
   clusters.get_cluster(&particle,&cluster);
@@ -86,9 +86,9 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecRestoreArray(xi,&particle.xil);CHKERRQ(ierr);
   ierr = VecRestoreArray(yi,&particle.yil);CHKERRQ(ierr);
   ierr = VecRestoreArray(zi,&particle.zil);CHKERRQ(ierr);
-  ierr = VecRestoreArray(xi,&particle.xjl);CHKERRQ(ierr);
-  ierr = VecRestoreArray(yi,&particle.yjl);CHKERRQ(ierr);
-  ierr = VecRestoreArray(zi,&particle.zjl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(xj,&particle.xjl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(yj,&particle.yjl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(zj,&particle.zjl);CHKERRQ(ierr);
   isort = new int [particle.nilocal];
 
   ierr = PetscLogEventEnd(ievent[1],0,0,0,0);CHKERRQ(ierr);
