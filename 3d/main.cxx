@@ -109,7 +109,7 @@ int main(int argc,char **argv)
 //    yd = yd*ny/(ny+1)+ed*h/2;
     ed = exp(-(xd*xd+yd*yd+zd*zd)/(4*parameter.vis*parameter.t))/(M_PI*4*parameter.vis*parameter.t);
     wd = ed;
-    gd = ed*h*h;
+    gd = ed*h*h*h;
     ierr = VecSetValues(x,1,&i,&xd,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(y,1,&i,&yd,INSERT_VALUES);CHKERRQ(ierr);
     ierr = VecSetValues(z,1,&i,&zd,INSERT_VALUES);CHKERRQ(ierr);
