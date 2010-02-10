@@ -1,3 +1,6 @@
+#ifndef _GETBUFFER_CLASS
+#define _GETBUFFER_CLASS
+
 class Get_buffer
 {
   int i,ista,iend,ix,iy,il,j,jc,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;
@@ -89,3 +92,5 @@ public:
     }
   }
 };
+
+#endif

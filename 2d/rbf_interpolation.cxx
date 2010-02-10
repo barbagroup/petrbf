@@ -1,3 +1,18 @@
+/** RBF solver.
+ *
+ * Using collocation, it finds the weights (gi) for a set of RBF gaussian bases (xi, yi).
+ *
+ * Parameters:
+ * xi, yi:       Coordinates of the gaussian bases.
+ * gi:           Returns the solved weights for the gaussian bases.
+ * ei:           Estimation of the field
+ * wi:           Solution of the field at the bases locations.
+ * sigma:        Sigma parameter of the gaussian.
+ * nsigma_box:   Size of the inner box or 'local box'.
+ * sigma buffer: Size of the buffer area.
+ * sigma_trunc:  Truncation point for sigma.
+ * its:          Returns solver teration data.
+ */
 PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
   double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {

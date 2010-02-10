@@ -1,5 +1,32 @@
+#include <fstream>
+#include <iostream>
+#include <petscksp.h>
+
+#include "par.h"
+#include "mpi_range.h"
+#include "get_cluster.h"
+#include "get_buffer.h"
+#include "get_trunc.h"
+#include "get_vorticity.h"
+#include "matmult.h"
+
+/** RBF gaussian interpolation.
+ *
+ * Interpolation from source points (xi,yi,wi) for the values (gj) at the evaluation
+ * points (xj,yj).
+ *
+ * Parameters
+ * xi, yi:       Coordinates of the evaluation points.
+ * wi:           Variable for storing the evaluation.
+ * xj, yj:       Coordinates of the source points.
+ * gj:           Weight for the source points.
+ * sigma:        Parameter of the gaussian.
+ * nsigma_box:   Size of inner box, measured in sigma.
+ * sigma_buffer: Size of the buffer, measured in sigma.
+ * sigma_trunc:  Truncation distance for the gaussians, meassured in sigma.
+ */
 PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec gj,
-  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
+  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc)
 {
   int i,*isort,ievent[10];
   double ximin,ximax,yimin,yimax,xjmin,xjmax,yjmin,yjmax;
@@ -121,6 +148,9 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecAssemblyBegin(particle.j);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.j);CHKERRQ(ierr);
   ierr = VecGetArray(particle.j,&particle.jl);CHKERRQ(ierr);
+  
+  delete[] isort;
+  isort = new int [particle.njlocal];
   for(i=0; i<particle.njlocal; i++) {
     isort[i] = particle.jl[i];
   }
@@ -139,10 +169,8 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecSetSizes(particle.xj,particle.njlocal,PETSC_DETERMINE);CHKERRQ(ierr);
   ierr = VecSetFromOptions(particle.xi);CHKERRQ(ierr);
   ierr = VecSetFromOptions(particle.xj);CHKERRQ(ierr);
-  ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.nilocal,PETSC_DECIDE,cluster.nighost,cluster.ighost,
-    &particle.xi);CHKERRQ(ierr);
-  ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.njlocal,PETSC_DECIDE,cluster.njghost,cluster.jghost,
-    &particle.xj);CHKERRQ(ierr);
+  ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.nilocal,PETSC_DECIDE,cluster.nighost,cluster.ighost,&particle.xi);CHKERRQ(ierr);
+  ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.njlocal,PETSC_DECIDE,cluster.njghost,cluster.jghost,&particle.xj);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.yi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.wi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xj,&particle.yj);CHKERRQ(ierr);

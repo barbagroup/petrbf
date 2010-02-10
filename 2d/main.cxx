@@ -98,11 +98,6 @@ int main(int argc,char **argv)
   for(i=ista; i<iend; i++) {
     xd = xmin+floor(i/ny)*h;
     yd = ymin+(i%ny)*h;
-//    ed = (float)rand()/RAND_MAX;
-//    xd = xd*nx/(nx+1)+ed*h/2;
-//    ed = (float)rand()/RAND_MAX;
-//    yd = yd*ny/(ny+1)+ed*h/2;
-//    ed = exp(-(xd*xd+yd*yd)/(4*parameter.vis*parameter.t))/(pi*4*parameter.vis*parameter.t);
     ed = 0.75*exp(-((9*xd-2)*(9*xd-2)+(9*yd-2)*(9*yd))/4)
       +0.75*exp(-((9*xd+1)*(9*xd+1))/49-((9*yd+1)*(9*yd+1))/10)
       +0.5*exp(-((9*xd-7)*(9*xd-7)+(9*yd-3)*(9*yd-3))/4)
@@ -126,9 +121,9 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
   rbf_interpolation(x,y,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
 
   /*
     calculate the L2 norm error
