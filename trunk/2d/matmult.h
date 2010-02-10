@@ -1,3 +1,6 @@
+#ifndef _MYMATMULT_FUNC
+#define _MYMATMULT_FUNC
+
 PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
 {
   int i,j,ic,il,ista,iend;
@@ -97,3 +100,5 @@ PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatRe
 
   PetscFunctionReturn(0);
 }
+
+#endif

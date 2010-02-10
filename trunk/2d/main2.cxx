@@ -152,9 +152,9 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(we);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(we);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
   rbf_interpolation(x,y,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  vorticity_evaluation(xg,yg,wg,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(xg,yg,wg,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
 
   ierr = PetscViewerASCIIOpen(PETSC_COMM_WORLD,"we.dat",&viewer);CHKERRQ(ierr);
   ierr = PetscViewerSetFormat(viewer,PETSC_VIEWER_ASCII_MATLAB);CHKERRQ(ierr);

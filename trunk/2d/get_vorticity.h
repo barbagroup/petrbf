@@ -1,3 +1,6 @@
+#ifndef _GETVORTICITY_CLASS
+#define _GETVORTICITY_CLASS
+
 class Get_vorticity
 {
   int i,j,ic,il,ista,iend;
@@ -23,3 +26,5 @@ public:
     }
   }
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef _PAR_STRUCTS
+#define _PAR_STRUCTS
+
 struct PARAMETER{
 int nt;
 int memory;
@@ -149,3 +152,5 @@ CLUSTER *c;
 };
 
 double epsf=1e-6;
+
+#endif

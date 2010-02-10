@@ -1,3 +1,6 @@
+#ifndef _GETTRUNC_CLASS
+#define _GETTRUNC_CLASS
+
 class Get_trunc
 {
   int i,il,ista,iend,ix,iy,j,jc,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;
@@ -83,3 +86,5 @@ public:
     }
   }
 };
+
+#endif

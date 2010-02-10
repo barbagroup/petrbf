@@ -1,3 +1,8 @@
+#ifndef _MPIRANGE_FUNC
+#define _MPIRANGE_FUNC
+
+#include <mpi.h>
+
 void mpi_range(MPI2 *mpi)
 {
   int imin,iwork1,iwork2;
@@ -12,3 +17,5 @@ void mpi_range(MPI2 *mpi)
   mpi->iend = mpi->ista+iwork1;
   if (mpi->myrank < iwork2) mpi->iend = mpi->iend+1;
 }
+
+#endif
