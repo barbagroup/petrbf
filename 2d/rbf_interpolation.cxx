@@ -1,3 +1,13 @@
+#include <fstream>
+#include <petscksp.h>
+
+#include "par.h"
+#include "mpi_range.h"
+#include "get_cluster.h"
+#include "get_buffer.h"
+#include "get_trunc.h"
+#include "matmult.h"
+
 /** RBF solver.
  *
  * Using collocation, it finds the weights (gi) for a set of RBF gaussian bases (xi, yi).
