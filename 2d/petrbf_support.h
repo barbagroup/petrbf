@@ -1,5 +1,7 @@
-/** Support functions for RBF manipulation.
- *
+#ifndef _PETRBF_SUPP
+#define _PETRBF_SUPP
+/**
+ * Support functions for RBF manipulation.
  */
 #include "petscvec.h"
 
@@ -46,3 +48,5 @@ int VecErrorWXY(Vec W, Vec X, Vec Y){
   
   return 0;
 }
+
+#endif

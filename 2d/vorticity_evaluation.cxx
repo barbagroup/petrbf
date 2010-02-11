@@ -1,3 +1,6 @@
+#ifndef _PETRBF_EVALUATION
+#define _PETRBF_EVALUATION
+
 #include <fstream>
 #include <iostream>
 #include <petscksp.h>
@@ -300,3 +303,5 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
   PetscFunctionReturn(0);
 }
+
+#endif
