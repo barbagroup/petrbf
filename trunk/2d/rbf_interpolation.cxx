@@ -1,3 +1,6 @@
+#ifndef _PETRBF_INTERPOLATION
+#define _PETRBF_INTERPOLATION
+
 #include <fstream>
 #include <petscksp.h>
 
@@ -320,3 +323,5 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
   ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
   PetscFunctionReturn(0);
 }
+
+#endif
