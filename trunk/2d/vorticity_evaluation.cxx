@@ -31,7 +31,7 @@
 PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec gj,
   double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc)
 {
-  int i,*isort,ievent[10];
+  int i,*isort,*jsort,ievent[10];
   double ximin,ximax,yimin,yimax,xjmin,xjmax,yjmin,yjmax;
   std::ofstream fid0,fid1;
   PARTICLE particle;
@@ -110,6 +110,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecRestoreArray(xj,&particle.xjl);CHKERRQ(ierr);
   ierr = VecRestoreArray(yj,&particle.yjl);CHKERRQ(ierr);
   isort = new int [particle.nilocal];
+  jsort = new int [particle.njlocal];
 
   ierr = PetscLogEventEnd(ievent[1],0,0,0,0);CHKERRQ(ierr);
   ierr = PetscLogEventBegin(ievent[2],0,0,0,0);CHKERRQ(ierr);
@@ -152,12 +153,10 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecAssemblyEnd(particle.j);CHKERRQ(ierr);
   ierr = VecGetArray(particle.j,&particle.jl);CHKERRQ(ierr);
   
-  delete[] isort;
-  isort = new int [particle.njlocal];
   for(i=0; i<particle.njlocal; i++) {
-    isort[i] = particle.jl[i];
+    jsort[i] = particle.jl[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,isort,&jsx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,&jsx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.j,&particle.jl);CHKERRQ(ierr);
 
   ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
@@ -264,6 +263,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
 
   delete[] isort;
+  delete[] jsort;
   delete[] cluster.ista;
   delete[] cluster.iend;
   delete[] cluster.jsta;
