@@ -133,7 +133,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecAssemblyEnd(particle.i);CHKERRQ(ierr);
   ierr = VecGetArray(particle.i,&particle.il);CHKERRQ(ierr);
   for(i=0; i<particle.nilocal; i++) {
-    isort[i] = particle.il[i];
+    isort[i] = (int) particle.il[i];
   }
   ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
@@ -154,7 +154,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecGetArray(particle.j,&particle.jl);CHKERRQ(ierr);
   
   for(i=0; i<particle.njlocal; i++) {
-    jsort[i] = particle.jl[i];
+    jsort[i] = (int) particle.jl[i];
   }
   ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,&jsx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.j,&particle.jl);CHKERRQ(ierr);

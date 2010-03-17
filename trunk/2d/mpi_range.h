@@ -19,3 +19,4 @@ void mpi_range(MPI2 *mpi)
 }
 
 #endif
+
