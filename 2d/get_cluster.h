@@ -188,8 +188,8 @@ public:
       }
     }
     cluster->nclocal  = cluster->icend - cluster->icsta;
-    cluster->maxghost = cluster->niperbox * cluster->ncghost;
-    cluster->maxlocal = cluster->niperbox * (cluster->nclocal + cluster->ncghost);
+    cluster->maxghost = std::max(cluster->niperbox, cluster->njperbox) * cluster->ncghost;
+    cluster->maxlocal = std::max(cluster->niperbox, cluster->njperbox) * (cluster->nclocal + cluster->ncghost);
     cluster->ighost   = new int [cluster->maxghost];
     cluster->ilocal   = new int [cluster->maxlocal];
     cluster->jghost   = new int [cluster->maxghost];
