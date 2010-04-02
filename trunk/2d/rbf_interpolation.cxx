@@ -1,6 +1,7 @@
 #ifndef _PETRBF_INTERPOLATION
 #define _PETRBF_INTERPOLATION
 
+#include <iostream>
 #include <fstream>
 #include <petscksp.h>
 
