@@ -64,7 +64,11 @@ PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatRe
   A = new PetscScalar [cluster->maxbuffer*cluster->maxbuffer];
 
   PetscFunctionBegin;
-  if (scall == MAT_REUSE_MATRIX) {SETERRQ(PETSC_ERR_SUP, "Cannot handle submatrix reuse yet");}
+  if (scall == MAT_REUSE_MATRIX) {
+    MPI_Comm comm;
+    PetscObjectGetComm((PetscObject) mat, &comm);
+    SETERRQ(comm, PETSC_ERR_SUP, "Cannot handle submatrix reuse yet");
+  }
   ierr = PetscMalloc(n * sizeof(Mat*), submat);CHKERRQ(ierr);
   ierr = VecGetArray(particle->gi,&particle->gil);CHKERRQ(ierr);
   for(ic = cluster->icsta; ic < cluster->icend; ic++) {
