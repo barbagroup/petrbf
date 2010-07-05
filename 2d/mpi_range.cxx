@@ -2,6 +2,7 @@
 #define _MPIRANGE_FUNC
 
 #include <mpi.h>
+#include "par.h"
 
 void mpi_range(MPI2 *mpi)
 {

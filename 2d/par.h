@@ -1,6 +1,8 @@
 #ifndef _PAR_STRUCTS
 #define _PAR_STRUCTS
 
+#include <petscksp.h>
+
 struct PARAMETER{
 int nt;
 int memory;
@@ -151,7 +153,7 @@ PARTICLE *p;
 CLUSTER *c;
 };
 
-double epsf=1e-6;
+const double epsf=1e-6;
 
 #endif
 

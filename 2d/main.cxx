@@ -9,15 +9,13 @@
 #include <petsclog.h>
 
 #include "par.h"
-#include "mpi_range.h"
 #include "get_cluster.h"
 #include "get_buffer.h"
 #include "get_trunc.h"
 #include "get_vorticity.h"
-#include "matmult.h"
 
-#include "vorticity_evaluation.cxx"
-#include "rbf_interpolation.cxx"
+extern PetscErrorCode vorticity_evaluation(Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int);
+extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,Vec,double,int,int,int,int*);
 
 int main(int argc,char **argv)
 {

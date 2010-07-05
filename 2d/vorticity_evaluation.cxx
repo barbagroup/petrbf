@@ -6,12 +6,10 @@
 #include <petscksp.h>
 
 #include "par.h"
-#include "mpi_range.h"
 #include "get_cluster.h"
 #include "get_buffer.h"
 #include "get_trunc.h"
 #include "get_vorticity.h"
-#include "matmult.h"
 
 /** RBF gaussian interpolation.
  *
