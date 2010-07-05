@@ -1,6 +1,10 @@
 #ifndef _GETCLUSTER_CLASS
 #define _GETCLUSTER_CLASS
 
+#include "par.h"
+
+extern void mpi_range(MPI2*);
+
 class Get_cluster
 {
   int n,ic,id,io,ip,ix,iy,ista,iend,ix_cluster,iy_cluster,j,jc,jd,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;

@@ -1,16 +1,15 @@
 #ifndef _PETRBF_INTERPOLATION
 #define _PETRBF_INTERPOLATION
 
-#include <iostream>
 #include <fstream>
 #include <petscksp.h>
 
 #include "par.h"
-#include "mpi_range.h"
 #include "get_cluster.h"
 #include "get_buffer.h"
-#include "get_trunc.h"
-#include "matmult.h"
+
+extern PetscErrorCode mymatmult(Mat,Vec,Vec);
+extern PetscErrorCode mysubmat(Mat,PetscInt,const IS*,const IS*,MatReuse,Mat**);
 
 /** RBF solver.
  *
