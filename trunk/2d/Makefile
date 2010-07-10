@@ -5,10 +5,10 @@ LIB = -L$(CUDA_INSTALL_PATH)/lib64 -L$(SDK_INSTALL_PATH)/lib -lcudart -lGL -lGLU
 
 cpu: main.o rbf_interpolation.o vorticity_evaluation.o mpi_range.o matmult.o
 	${CLINKER} -o main $? ${PETSC_SNES_LIB}
-	mpirun -n $(NP) ./main .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
+	$(PETSC_DIR)/$(PETSC_ARCH)/bin/mpiexec -n $(NP) ./main .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall -log_summary
 gpu: main.o rbf_interpolation.o vorticity_evaluation.o mpi_range.o matmultgpu.o gpumatmult.o
 	${CLINKER} -o main $? ${PETSC_SNES_LIB} $(LIB)
-	mpirun -n $(NP) ./main .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
+	$(PETSC_DIR)/$(PETSC_ARCH)/bin/mpiexec -n $(NP) ./main .9 5 1.9 -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall -log_summary
 
 main2: main2.o
 	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
