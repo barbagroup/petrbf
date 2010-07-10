@@ -6,14 +6,14 @@
 #include "get_buffer.h"
 #include "get_trunc.h"
 
-extern void gpumatmult(double*, double*, double*, double*, double*, double*, int*, int, double);
+extern void gpumatmult(float*, float*, float*, float*, float*, float*, int*, int, float, int, int);
 
 PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
 {
   int i,j,ic,il,ista,iend;
   int iblok,isize,im,jc,*offset;
-  double *targetX,*targetY,*targetW,*sourceX,*sourceY,*sourceG;
-  double dx,dy,w;
+  float sigma;
+  float *targetX,*targetY,*targetW,*sourceX,*sourceY,*sourceG;
   PetscScalar *ax,*ay;
   PetscErrorCode ierr;
   BOTH *both;
@@ -22,12 +22,12 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
   CLUSTER *cluster = both->c;
 
   offset = new int [cluster->n+1];
-  targetX = new double [cluster->n*threadsPerBlock];
-  targetY = new double [cluster->n*threadsPerBlock];
-  targetW = new double [cluster->n*threadsPerBlock];
-  sourceX = new double [cluster->n*cluster->maxtrunc];
-  sourceY = new double [cluster->n*cluster->maxtrunc];
-  sourceG = new double [cluster->n*cluster->maxtrunc];
+  targetX = new float [cluster->n*threadsPerBlock];
+  targetY = new float [cluster->n*threadsPerBlock];
+  targetW = new float [cluster->n*threadsPerBlock];
+  sourceX = new float [cluster->n*cluster->maxtrunc];
+  sourceY = new float [cluster->n*cluster->maxtrunc];
+  sourceG = new float [cluster->n*cluster->maxtrunc];
   PetscFunctionBegin;
   ierr = VecGetArray(x,&ax);CHKERRQ(ierr);
   ierr = VecGetArray(y,&ay);CHKERRQ(ierr);
@@ -49,8 +49,8 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
     isize = iend-ista+1;
     for (i=0; i<isize; i++) {
       im = iblok*threadsPerBlock+i;
-      targetX[im] = particle->xil[i+ista];
-      targetY[im] = particle->yil[i+ista];
+      targetX[im] = float(particle->xil[i+ista]);
+      targetY[im] = float(particle->yil[i+ista]);
     }
     for (i=isize; i<threadsPerBlock; i++) {
       im = iblok*threadsPerBlock+i;
@@ -59,16 +59,17 @@ PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
     }
     offset[iblok] = jc;
     for (j=0; j<cluster->nptruncj; j++) {
-      sourceX[jc] = cluster->xjt[j];
-      sourceY[jc] = cluster->yjt[j];
-      sourceG[jc] = cluster->gjt[j];
+      sourceX[jc] = float(cluster->xjt[j]);
+      sourceY[jc] = float(cluster->yjt[j]);
+      sourceG[jc] = float(cluster->gjt[j]);
       jc++;
     }
     iblok++;
   }
   offset[iblok] = jc;
 
-  gpumatmult(targetX,targetY,targetW,sourceX,sourceY,sourceG,offset,iblok,particle->sigma);
+  sigma = float(particle->sigma);
+  gpumatmult(targetX,targetY,targetW,sourceX,sourceY,sourceG,offset,iblok,sigma,cluster->n,cluster->maxtrunc);
 
   iblok = 0;
   for (ic=cluster->icsta; ic<cluster->icend; ic++) {
