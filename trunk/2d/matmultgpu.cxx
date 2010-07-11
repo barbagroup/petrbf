@@ -6,6 +6,7 @@
 #include "get_buffer.h"
 #include "get_trunc.h"
 
+const int threadsPerBlock=128;
 extern void gpumatmult(float*, float*, float*, float*, float*, float*, int*, int, float, int, int);
 
 PetscErrorCode mymatmult(Mat A,Vec x,Vec y)

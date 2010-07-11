@@ -1,4 +1,4 @@
-export OVERLAP=10
+export OVERLAP=8
 export B_DOMAIN=3
 export D_DOMAIN=15
 rm stop
@@ -15,10 +15,10 @@ else
 echo "||  overlap :  $O     B domain :  $B    D/B ratio :  $D   compile"
 fi
 echo "||-----------------------------------------------------------------"
-make
+make gpuc
 # llsubmit ../bluegene.sh
 # qsub -V ../start.sh
-$PETSC_DIR/$PETSC_ARCH/bin/mpiexec -np 7 ./main $O $B $D -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-13 -ksp_max_it 1000 -vecscatter_alltoall
+$PETSC_DIR/$PETSC_ARCH/bin/mpiexec -np 1 ./main $O $B $D -pc_type asm -sub_pc_type lu -sub_mat_type dense -ksp_monitor -ksp_rtol 1e-5 -ksp_max_it 100 -vecscatter_alltoall
 export D_DOMAIN=`expr $D_DOMAIN + 2`
 if [ $D_DOMAIN -gt 23 ]; then
 export D_DOMAIN=15

@@ -1,5 +1,5 @@
 #include <cutil.h>
-const int threadsPerBlock = 64;
+const int threadsPerBlock = 128;
 
 unsigned int hostOffsetSize;
 unsigned int hostTargetSize;
