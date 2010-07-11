@@ -136,11 +136,11 @@ int main(int argc,char **argv)
   if (mpi.myrank == 0) {
     char file[13];
     if (1.0-overlap < epsf) {
-//      sprintf(file,"%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+      sprintf(file,"%s-%s-%s.dat",argv[1],argv[2],argv[3]);
     } else {
-//      sprintf(file,"0%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+      sprintf(file,"0%s-%s-%s.dat",argv[1],argv[2],argv[3]);
     }
-    sprintf(file,"%d.dat",mpi.nprocs);
+//    sprintf(file,"%d.dat",mpi.nprocs);
     fid0.open(file);
     fid0 << t << std::endl << its;
     fid0.close();

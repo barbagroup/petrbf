@@ -153,7 +153,6 @@ PARTICLE *p;
 CLUSTER *c;
 };
 
-const int threadsPerBlock=64;
 const double epsf=1e-6;
 
 #endif
