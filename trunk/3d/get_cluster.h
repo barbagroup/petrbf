@@ -1,3 +1,10 @@
+#ifndef get_cluster_h
+#define get_cluster_h
+
+#include "par.h"
+
+extern void mpi_range(MPI2*);
+
 class Get_cluster
 {
   int n,ic,id,io,ip,ix,iy,iz,ista,iend,ix_cluster,iy_cluster,iz_cluster;
@@ -112,14 +119,14 @@ public:
     id = 0;
     jd = 0;
     for (ic=0; ic<cluster->n; ic++) {
-      ipoffset[ic] += id;
-      jpoffset[ic] += jd;
-      cluster->ista[ic] = id;
-      cluster->jsta[ic] = jd;
-      id += ipglobal[ic];
-      jd += jpglobal[ic];
-      cluster->iend[ic] = id-1;
-      cluster->jend[ic] = jd-1;
+      ipoffset[ic]      += id;
+      jpoffset[ic]      += jd;
+      cluster->ista[ic]  = id;
+      cluster->jsta[ic]  = jd;
+      id                += ipglobal[ic];
+      jd                += jpglobal[ic];
+      cluster->iend[ic]  = id-1;
+      cluster->jend[ic]  = jd-1;
     }
 
     mpi.nsta = 0;
@@ -212,13 +219,13 @@ public:
         }
       }
     }
-    cluster->nclocal = cluster->icend-cluster->icsta;
-    cluster->maxghost = cluster->niperbox*cluster->ncghost;
-    cluster->maxlocal = cluster->niperbox*(cluster->nclocal+cluster->ncghost);
-    cluster->ighost = new int [cluster->maxghost];
-    cluster->ilocal = new int [cluster->maxlocal];
-    cluster->jghost = new int [cluster->maxghost];
-    cluster->jlocal = new int [cluster->maxlocal];
+    cluster->nclocal  = cluster->icend-cluster->icsta;
+    cluster->maxghost = std::max(cluster->niperbox,cluster->njperbox)*cluster->ncghost;
+    cluster->maxlocal = std::max(cluster->niperbox,cluster->njperbox)*(cluster->nclocal+cluster->ncghost);
+    cluster->ighost   = new int [cluster->maxghost];
+    cluster->ilocal   = new int [cluster->maxlocal];
+    cluster->jghost   = new int [cluster->maxghost];
+    cluster->jlocal   = new int [cluster->maxlocal];
 
     /*
       local cluster indexing
@@ -301,3 +308,5 @@ public:
     cluster->gjt = new double [cluster->maxtrunc];
   }
 };
+
+#endif

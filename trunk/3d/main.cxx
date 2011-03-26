@@ -9,15 +9,13 @@
 #include <petsclog.h>
 
 #include "par.h"
-#include "mpi_range.h"
 #include "get_cluster.h"
 #include "get_buffer.h"
 #include "get_trunc.h"
 #include "get_vorticity.h"
-#include "matmult.h"
 
-#include "vorticity_evaluation.cxx"
-#include "rbf_interpolation.cxx"
+extern PetscErrorCode vorticity_evaluation(Vec,Vec,Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int);
+extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int,int*);
 
 int main(int argc,char **argv)
 {
@@ -46,14 +44,14 @@ int main(int argc,char **argv)
   /*
     particle parameters
   */
-  sigma = 0.1;
+  sigma = 0.05;
   overlap = atof(argv[1]);
   h = overlap*sigma;
-  xmin = -1;
+  xmin = 0;
   xmax = 1;
-  ymin = -1;
+  ymin = 0;
   ymax = 1;
-  zmin = -1;
+  zmin = 0;
   zmax = 1;
 
   /*
@@ -103,10 +101,6 @@ int main(int argc,char **argv)
     xd = xmin+floor((i%(nx*ny))/ny)*h;
     yd = ymin+(i%ny)*h;
     zd = zmin+floor(i/(nx*ny))*h;
-//    ed = (float)rand()/RAND_MAX;
-//    xd = xd*nx/(nx+1)+ed*h/2;
-//    ed = (float)rand()/RAND_MAX;
-//    yd = yd*ny/(ny+1)+ed*h/2;
     ed = exp(-(xd*xd+yd*yd+zd*zd)/(4*parameter.vis*parameter.t))/(M_PI*4*parameter.vis*parameter.t);
     wd = ed;
     gd = ed*h*h*h;
@@ -130,9 +124,9 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
   rbf_interpolation(x,y,z,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
-  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
 
   /*
     calculate the L2 norm error

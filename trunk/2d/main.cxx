@@ -100,6 +100,7 @@ int main(int argc,char **argv)
       +0.75*exp(-((9*xd+1)*(9*xd+1))/49-((9*yd+1)*(9*yd+1))/10)
       +0.5*exp(-((9*xd-7)*(9*xd-7)+(9*yd-3)*(9*yd-3))/4)
       -0.2*exp(-(9*xd-4)*(9*xd-4)-(9*yd-7)*(9*yd-7));
+//    ed = exp(-(xd*xd+yd*yd)/(4*parameter.vis*parameter.t))/(M_PI*4*parameter.vis*parameter.t);
     wd = ed;
     gd = ed*h*h;
     ierr = VecSetValues(x,1,&i,&xd,INSERT_VALUES);CHKERRQ(ierr);
@@ -126,6 +127,12 @@ int main(int argc,char **argv)
   /*
     calculate the L2 norm error
   */
+  PetscScalar *ee,*ww;
+  ierr = VecGetArray(e,&ee);
+  ierr = VecGetArray(g,&ww);
+  for(i=ista; i<iend; i++) {
+    std::cout << i << " "  << ee[i] << " " << ww[i] << std::endl;
+  }
   ierr = VecAXPY(w,-1,e);CHKERRQ(ierr);
   ierr = VecNorm(e,NORM_2,&err);CHKERRQ(ierr);
   ierr = VecNorm(w,NORM_2,&errd);CHKERRQ(ierr);
@@ -136,11 +143,11 @@ int main(int argc,char **argv)
   if (mpi.myrank == 0) {
     char file[13];
     if (1.0-overlap < epsf) {
-      sprintf(file,"%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+//      sprintf(file,"%s-%s-%s.dat",argv[1],argv[2],argv[3]);
     } else {
-      sprintf(file,"0%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+//      sprintf(file,"0%s-%s-%s.dat",argv[1],argv[2],argv[3]);
     }
-//    sprintf(file,"%d.dat",mpi.nprocs);
+    sprintf(file,"%d.dat",mpi.nprocs);
     fid0.open(file);
     fid0 << t << std::endl << its;
     fid0.close();

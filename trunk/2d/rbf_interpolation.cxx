@@ -1,6 +1,3 @@
-#ifndef _PETRBF_INTERPOLATION
-#define _PETRBF_INTERPOLATION
-
 #include <fstream>
 #include <petscksp.h>
 
@@ -129,7 +126,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
   for(i=0; i<particle.nilocal; i++) {
     isort[i] = (int) particle.il[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,&isx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,PETSC_COPY_VALUES,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
 
   ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
@@ -232,8 +229,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
         idx[i] = cluster.idx[i];
       }
     }
-    ierr = ISCreateGeneral(PETSC_COMM_SELF,cluster.npbufferi,idx,&is[id]);CHKERRQ(ierr);
-    ierr = ISCreateGeneral(PETSC_COMM_SELF,iend-ista+1,idx,&is_local[id]);CHKERRQ(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,cluster.npbufferi,idx,PETSC_COPY_VALUES,&is[id]);CHKERRQ(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,iend-ista+1,idx,PETSC_COPY_VALUES,&is_local[id]);CHKERRQ(ierr);
   }
   ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRQ(ierr);
   ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
@@ -323,6 +320,3 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec ei, Vec wi,
   ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
   PetscFunctionReturn(0);
 }
-
-#endif
-

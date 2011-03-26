@@ -1,5 +1,5 @@
-#ifndef _PAR_STRUCTS
-#define _PAR_STRUCTS
+#ifndef par_h
+#define par_h
 
 #include <petscksp.h>
 

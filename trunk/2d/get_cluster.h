@@ -1,5 +1,5 @@
-#ifndef _GETCLUSTER_CLASS
-#define _GETCLUSTER_CLASS
+#ifndef get_cluster_h
+#define get_cluster_h
 
 #include "par.h"
 
@@ -33,7 +33,6 @@ public:
     cluster->ny = (int)ceil((cluster->ymax - cluster->ymin)/cluster->box_length);
     cluster->n  = cluster->nx*cluster->ny;
 
-    
     // Allocate arrays
     cluster->ista = new int [cluster->n];
     cluster->iend = new int [cluster->n];
@@ -52,7 +51,6 @@ public:
     jpoffset = new int [cluster->n];
     idghost  = new int [cluster->n];
 
-    
     // Calculate the x, y index and coordinates of the center
     ic = -1;
     for (ix = 0; ix < cluster->nx; ix++) {
