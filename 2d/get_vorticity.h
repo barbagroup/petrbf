@@ -1,5 +1,5 @@
-#ifndef _GETVORTICITY_CLASS
-#define _GETVORTICITY_CLASS
+#ifndef get_vorticity_h
+#define get_vorticity_h
 
 class Get_vorticity
 {

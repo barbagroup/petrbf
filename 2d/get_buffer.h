@@ -1,5 +1,5 @@
-#ifndef _GETBUFFER_CLASS
-#define _GETBUFFER_CLASS
+#ifndef get_buffer_h
+#define get_buffer_h
 
 class Get_buffer
 {
@@ -9,7 +9,7 @@ public:
   void get_buffer(PARTICLE *particle, CLUSTER *cluster, int ic)
   {
     cluster->buffer_length = cluster->sigma_buffer*particle->sigma/2+epsf;
-    
+
     /*
       loop through all clusters
     */

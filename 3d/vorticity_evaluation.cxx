@@ -1,5 +1,30 @@
+#include <fstream>
+#include <iostream>
+#include <petscksp.h>
+
+#include "par.h"
+#include "get_cluster.h"
+#include "get_buffer.h"
+#include "get_trunc.h"
+#include "get_vorticity.h"
+
+/** RBF gaussian interpolation.
+ *
+ * Interpolation from source points (xi,yi,wi) for the values (gj) at the evaluation
+ * points (xj,yj).
+ *
+ * Parameters
+ * xi, yi:       Coordinates of the evaluation points.
+ * wi:           Variable for storing the evaluation.
+ * xj, yj:       Coordinates of the source points.
+ * gj:           Weight for the source points.
+ * sigma:        Parameter of the gaussian.
+ * nsigma_box:   Size of inner box, measured in sigma.
+ * sigma_buffer: Size of the buffer, measured in sigma.
+ * sigma_trunc:  Truncation distance for the gaussians, meassured in sigma.
+ */
 PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec yj, Vec zj, Vec gj,
-  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
+  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc)
 {
   int i,*isort,*jsort,ievent[10];
   double ximin,ximax,yimin,yimax,zimin,zimax,xjmin,xjmax,yjmin,yjmax,zjmin,zjmax;
@@ -115,7 +140,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   for(i=0; i<particle.nilocal; i++) {
     isort[i] = particle.il[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,&isx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,PETSC_COPY_VALUES,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
 
   ierr = ISCreateStride(PETSC_COMM_WORLD,particle.njlocal,particle.jsta,1,&jsx);CHKERRQ(ierr);
@@ -135,7 +160,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   for(i=0; i<particle.njlocal; i++) {
     jsort[i] = particle.jl[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,&jsx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,PETSC_COPY_VALUES,&jsx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.j,&particle.jl);CHKERRQ(ierr);
 
   ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);

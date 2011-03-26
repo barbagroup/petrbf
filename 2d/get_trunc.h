@@ -1,5 +1,5 @@
-#ifndef _GETTRUNC_CLASS
-#define _GETTRUNC_CLASS
+#ifndef get_trunc_h
+#define get_trunc_h
 
 class Get_trunc
 {
@@ -10,7 +10,7 @@ public:
   {
     MPI2 mpi;
     MPI_Comm_rank(PETSC_COMM_WORLD,&mpi.myrank);
- 
+
     cluster->trunc_length = cluster->sigma_trunc*particle->sigma/2+epsf;
 
     ista = cluster->ista[ic];
@@ -47,7 +47,7 @@ public:
             jc = jx*cluster->ny+jy;
             jsta = cluster->jsta[jc];
             jend = cluster->jend[jc];
- 
+
   /*
     select from the particles in the neighbor boxes, the ones that belong in the truncated zone
   */
@@ -56,7 +56,7 @@ public:
                 xj = particle->xjl[j];
                 yj = particle->yjl[j];
                 gj = particle->gjl[j];
- 
+
   /*
     add all particles in the neighbor boxes into the corresponding cell structure
   */
@@ -88,4 +88,3 @@ public:
 };
 
 #endif
-

@@ -1,3 +1,6 @@
+#ifndef get_buffer_h
+#define get_buffer_h
+
 class Get_buffer
 {
   int i,ista,iend,ix,iy,iz,il,j,jc,jsta,jend,jx,jy,jz,jx_min,jx_max,jy_min,jy_max,jz_min,jz_max;
@@ -6,7 +9,7 @@ public:
   void get_buffer(PARTICLE *particle, CLUSTER *cluster, int ic)
   {
     cluster->buffer_length = cluster->sigma_buffer*particle->sigma/2+epsf;
-    
+
     /*
       loop through all clusters
     */
@@ -101,3 +104,5 @@ public:
     }
   }
 };
+
+#endif

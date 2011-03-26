@@ -1,3 +1,6 @@
+#ifndef get_trunc_h
+#define get_trunc_h
+
 class Get_trunc
 {
   int i,il,ista,iend,ix,iy,iz,j,jc,jsta,jend,jx,jy,jz,jx_min,jx_max,jy_min,jy_max,jz_min,jz_max;
@@ -7,7 +10,7 @@ public:
   {
     MPI2 mpi;
     MPI_Comm_rank(PETSC_COMM_WORLD,&mpi.myrank);
- 
+
     cluster->trunc_length = cluster->sigma_trunc*particle->sigma/2+epsf;
 
     ista = cluster->ista[ic];
@@ -50,7 +53,7 @@ public:
               jc = jz*cluster->nx*cluster->ny+jx*cluster->ny+jy;
               jsta = cluster->jsta[jc];
               jend = cluster->jend[jc];
- 
+
   /*
     select from the particles in the neighbor boxes, the ones that belong in the truncated zone
   */
@@ -60,7 +63,7 @@ public:
                   yj = particle->yjl[j];
                   zj = particle->zjl[j];
                   gj = particle->gjl[j];
- 
+
   /*
     add all particles in the neighbor boxes into the corresponding cell structure
   */
@@ -95,3 +98,5 @@ public:
     }
   }
 };
+
+#endif

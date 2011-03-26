@@ -1,6 +1,3 @@
-#ifndef _PETRBF_EVALUATION
-#define _PETRBF_EVALUATION
-
 #include <fstream>
 #include <iostream>
 #include <petscksp.h>
@@ -133,7 +130,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   for(i=0; i<particle.nilocal; i++) {
     isort[i] = (int) particle.il[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,&isx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,PETSC_COPY_VALUES,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
 
   ierr = ISCreateStride(PETSC_COMM_WORLD,particle.njlocal,particle.jsta,1,&jsx);CHKERRQ(ierr);
@@ -150,11 +147,11 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = VecAssemblyBegin(particle.j);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.j);CHKERRQ(ierr);
   ierr = VecGetArray(particle.j,&particle.jl);CHKERRQ(ierr);
-  
+
   for(i=0; i<particle.njlocal; i++) {
     jsort[i] = (int) particle.jl[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,&jsx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.njlocal,jsort,PETSC_COPY_VALUES,&jsx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.j,&particle.jl);CHKERRQ(ierr);
 
   ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
@@ -301,5 +298,3 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec wi, Vec xj, Vec yj, Vec 
   ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
   PetscFunctionReturn(0);
 }
-
-#endif

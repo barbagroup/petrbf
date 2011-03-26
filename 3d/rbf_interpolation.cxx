@@ -1,3 +1,28 @@
+#include <fstream>
+#include <petscksp.h>
+
+#include "par.h"
+#include "get_cluster.h"
+#include "get_buffer.h"
+
+extern PetscErrorCode mymatmult(Mat,Vec,Vec);
+extern PetscErrorCode mysubmat(Mat,PetscInt,const IS*,const IS*,MatReuse,Mat**);
+
+/** RBF solver.
+ *
+ * Using collocation, it finds the weights (gi) for a set of RBF gaussian bases (xi, yi, zi).
+ *
+ * Parameters:
+ * xi, yi, zi:   Coordinates of the gaussian bases.
+ * gi:           Returns the solved weights for the gaussian bases.
+ * ei:           Estimation of the field
+ * wi:           Solution of the field at the bases locations.
+ * sigma:        Sigma parameter of the gaussian.
+ * nsigma_box:   Size of the inner box or 'local box'.
+ * sigma buffer: Size of the buffer area.
+ * sigma_trunc:  Truncation point for sigma.
+ * its:          Returns solver teration data.
+ */
 PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {
@@ -107,7 +132,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   for(i=0; i<particle.nilocal; i++) {
     isort[i] = particle.il[i];
   }
-  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,&isx);CHKERRQ(ierr);
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,PETSC_COPY_VALUES,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
 
   ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
@@ -219,8 +244,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
         idx[i] = cluster.idx[i];
       }
     }
-    ierr = ISCreateGeneral(PETSC_COMM_SELF,cluster.npbufferi,idx,&is[id]);CHKERRQ(ierr);
-    ierr = ISCreateGeneral(PETSC_COMM_SELF,iend-ista+1,idx,&is_local[id]);CHKERRQ(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,cluster.npbufferi,idx,PETSC_COPY_VALUES,&is[id]);CHKERRQ(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,iend-ista+1,idx,PETSC_COPY_VALUES,&is_local[id]);CHKERRQ(ierr);
   }
   ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRQ(ierr);
   ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
