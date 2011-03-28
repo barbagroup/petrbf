@@ -4,7 +4,7 @@
 class Get_trunc
 {
   int i,il,ista,iend,ix,iy,iz,j,jc,jsta,jend,jx,jy,jz,jx_min,jx_max,jy_min,jy_max,jz_min,jz_max;
-  double xc,yc,zc,xi,yi,zi,ei,wi,xj,yj,zj,gj;
+  double xc,yc,zc,xi,yi,zi,wi,xj,yj,zj,gj;
 public:
   void get_trunc(PARTICLE *particle, CLUSTER *cluster, int ic)
   {
