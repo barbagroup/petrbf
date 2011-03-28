@@ -15,7 +15,7 @@
 #include "get_vorticity.h"
 
 extern PetscErrorCode vorticity_evaluation(Vec,Vec,Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int);
-extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int,int*);
+extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,Vec,double,int,int,int,int*);
 
 int main(int argc,char **argv)
 {
@@ -44,14 +44,14 @@ int main(int argc,char **argv)
   /*
     particle parameters
   */
-  sigma = 0.05;
+  sigma = 0.1;
   overlap = atof(argv[1]);
   h = overlap*sigma;
-  xmin = 0;
+  xmin = -1;
   xmax = 1;
-  ymin = 0;
+  ymin = -1;
   ymax = 1;
-  zmin = 0;
+  zmin = -1;
   zmax = 1;
 
   /*
@@ -124,8 +124,8 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
-  rbf_interpolation(x,y,z,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+//  vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
+  rbf_interpolation(x,y,z,g,e,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
   vorticity_evaluation(x,y,z,w,x,y,z,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
 
   /*

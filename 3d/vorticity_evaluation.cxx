@@ -311,7 +311,6 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   delete[] cluster.yib;
   delete[] cluster.zib;
   delete[] cluster.gib;
-  delete[] cluster.eib;
   delete[] cluster.wib;
   delete[] cluster.xjt;
   delete[] cluster.yjt;

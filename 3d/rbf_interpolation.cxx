@@ -15,7 +15,6 @@ extern PetscErrorCode mysubmat(Mat,PetscInt,const IS*,const IS*,MatReuse,Mat**);
  * Parameters:
  * xi, yi, zi:   Coordinates of the gaussian bases.
  * gi:           Returns the solved weights for the gaussian bases.
- * ei:           Estimation of the field
  * wi:           Solution of the field at the bases locations.
  * sigma:        Sigma parameter of the gaussian.
  * nsigma_box:   Size of the inner box or 'local box'.
@@ -23,7 +22,7 @@ extern PetscErrorCode mysubmat(Mat,PetscInt,const IS*,const IS*,MatReuse,Mat**);
  * sigma_trunc:  Truncation point for sigma.
  * its:          Returns solver teration data.
  */
-PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
+PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec wi,
   double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {
   int i,ic,id,ista,iend,*isort,ievent[10];
@@ -149,7 +148,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecDuplicate(particle.xi,&particle.yi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.zi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.gi);CHKERRQ(ierr);
-  ierr = VecDuplicate(particle.xi,&particle.ei);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.wi);CHKERRQ(ierr);
   ierr = ISCreateStride(PETSC_COMM_WORLD,particle.nilocal,particle.ista,1,&isy);CHKERRQ(ierr);
   ierr = VecScatterCreate(xi,isx,particle.xi,isy,&ctx);CHKERRQ(ierr);
@@ -161,8 +159,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecScatterEnd(ctx,zi,particle.zi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,gi,particle.gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,gi,particle.gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterBegin(ctx,ei,particle.ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterEnd(ctx,ei,particle.ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,wi,particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,wi,particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
@@ -174,8 +170,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecAssemblyEnd(particle.zi);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.gi);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.gi);CHKERRQ(ierr);
-  ierr = VecAssemblyBegin(particle.ei);CHKERRQ(ierr);
-  ierr = VecAssemblyEnd(particle.ei);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.wi);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.wi);CHKERRQ(ierr);
   ierr = VecGhostUpdateBegin(particle.xi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
@@ -186,8 +180,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecGhostUpdateEnd(particle.zi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecGhostUpdateBegin(particle.gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecGhostUpdateEnd(particle.gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecGhostUpdateBegin(particle.ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecGhostUpdateEnd(particle.ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecGhostUpdateBegin(particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecGhostUpdateEnd(particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
 
@@ -222,7 +214,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecGetArray(particle.yi,&particle.yil);CHKERRQ(ierr);
   ierr = VecGetArray(particle.zi,&particle.zil);CHKERRQ(ierr);
   ierr = VecGetArray(particle.gi,&particle.gil);CHKERRQ(ierr);
-  ierr = VecGetArray(particle.ei,&particle.eil);CHKERRQ(ierr);
   ierr = VecGetArray(particle.wi,&particle.wil);CHKERRQ(ierr);
   ierr = VecGetArray(particle.xi,&particle.xjl);CHKERRQ(ierr);
   ierr = VecGetArray(particle.yi,&particle.yjl);CHKERRQ(ierr);
@@ -251,7 +242,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
   ierr = KSPSetOperators(ksp,M,P,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
   ierr = PetscLogEventEnd(ievent[4],0,0,0,0);CHKERRQ(ierr);
-  ierr = KSPSolve(ksp,particle.ei,xx);CHKERRQ(ierr);
+  ierr = KSPSolve(ksp,particle.wi,xx);CHKERRQ(ierr);
   ierr = PetscLogEventBegin(ievent[5],0,0,0,0);CHKERRQ(ierr);
   ierr = KSPGetIterationNumber(ksp,its);CHKERRQ(ierr);
 
@@ -259,7 +250,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecRestoreArray(particle.yi,&particle.yil);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.zi,&particle.zil);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.gi,&particle.gil);CHKERRQ(ierr);
-  ierr = VecRestoreArray(particle.ei,&particle.eil);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.wi,&particle.wil);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.xi,&particle.xjl);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.yi,&particle.yjl);CHKERRQ(ierr);
@@ -287,8 +277,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecScatterEnd(ctx,particle.zi,zi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.gi,gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.gi,gi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterBegin(ctx,particle.ei,ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterEnd(ctx,particle.ei,ei,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.wi,wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.wi,wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
@@ -320,7 +308,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   delete[] cluster.yib;
   delete[] cluster.zib;
   delete[] cluster.gib;
-  delete[] cluster.eib;
   delete[] cluster.wib;
   delete[] cluster.xjt;
   delete[] cluster.yjt;
@@ -336,7 +323,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec ei, Vec wi,
   ierr = VecDestroy(particle.xi);CHKERRQ(ierr);
   ierr = VecDestroy(particle.yi);CHKERRQ(ierr);
   ierr = VecDestroy(particle.gi);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.ei);CHKERRQ(ierr);
   ierr = VecDestroy(particle.wi);CHKERRQ(ierr);
   ierr = MatDestroy(M);CHKERRQ(ierr);
   ierr = MatDestroy(P);CHKERRQ(ierr);
