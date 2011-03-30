@@ -78,8 +78,8 @@ int main(int argc,char **argv)
     printf("|| std of Gaussian (sigma)    : %f      \n",sigma);
     printf("|| overlap ratio (h/sigma)    : %f      \n",overlap);
     printf("|| non-overlapping subdomain  : %d sigma\n",nsigma_box);
-    printf("|| overlapping subdomain      : %d sigma\n",(int)fmin(sigma_buffer,floor(2/sigma)));
-    printf("|| entire domain              : %d sigma\n",(int)floor(2/sigma));
+    printf("|| overlapping subdomain      : %d sigma\n",(int)fmin(sigma_buffer,floor((xmax-xmin)/sigma)));
+    printf("|| entire domain              : %d sigma\n",(int)floor((xmax-xmin)/sigma));
     printf("||---------------------------------------\n");
   }
   nj = ni;
@@ -98,9 +98,9 @@ int main(int argc,char **argv)
   ierr = VecGetOwnershipRange(x,&ista,&iend);CHKERRQ(ierr);
   nlocal = iend-ista;
   for(i=ista; i<iend; i++) {
-    xd = xmin+floor((i%(nx*ny))/ny)*h;
+    xd = xmin+(floor((i%(nx*ny))/ny))*h;
     yd = ymin+(i%ny)*h;
-    zd = zmin+floor(i/(nx*ny))*h;
+    zd = zmin+(floor(i/(nx*ny)))*h;
     ed = exp(-(xd*xd+yd*yd+zd*zd)/(4*parameter.vis*parameter.t))/(M_PI*4*parameter.vis*parameter.t);
     wd = ed;
     gd = ed*h*h*h;

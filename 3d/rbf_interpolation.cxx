@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <petscksp.h>
 
 #include "par.h"

@@ -269,7 +269,6 @@ public:
     cluster->xib = new double [cluster->maxbuffer];
     cluster->yib = new double [cluster->maxbuffer];
     cluster->gib = new double [cluster->maxbuffer];
-    cluster->eib = new double [cluster->maxbuffer];
     cluster->wib = new double [cluster->maxbuffer];
     cluster->xjt = new double [cluster->maxtrunc];
     cluster->yjt = new double [cluster->maxtrunc];

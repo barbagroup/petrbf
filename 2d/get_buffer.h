@@ -4,7 +4,7 @@
 class Get_buffer
 {
   int i,ista,iend,ix,iy,il,j,jc,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;
-  double xc,yc,xi,yi,gi,wi,ei,xj,yj,gj;
+  double xc,yc,xi,yi,gi,wi,xj,yj,gj;
 public:
   void get_buffer(PARTICLE *particle, CLUSTER *cluster, int ic)
   {
@@ -34,7 +34,6 @@ public:
         cluster->xib[i] = particle->xil[j];
         cluster->yib[i] = particle->yil[j];
         cluster->gib[i] = particle->gil[j];
-        cluster->eib[i] = particle->eil[j];
         cluster->wib[i] = particle->wil[j];
         cluster->idx[i] = cluster->ilocal[j];
       }
@@ -57,7 +56,6 @@ public:
                 xi = particle->xil[j];
                 yi = particle->yil[j];
                 gi = particle->gil[j];
-                ei = particle->eil[j];
                 wi = particle->wil[j];
 
     /*
@@ -68,7 +66,6 @@ public:
                   cluster->xib[i] = xi;
                   cluster->yib[i] = yi;
                   cluster->gib[i] = gi;
-                  cluster->eib[i] = ei;
                   cluster->wib[i] = wi;
                   cluster->idx[i] = cluster->ilocal[j];
                 }
