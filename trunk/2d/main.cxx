@@ -15,7 +15,7 @@
 #include "get_vorticity.h"
 
 extern PetscErrorCode vorticity_evaluation(Vec,Vec,Vec,Vec,Vec,Vec,double,int,int,int);
-extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,Vec,double,int,int,int,int*);
+extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,double,int,int,int,int*);
 
 int main(int argc,char **argv)
 {
@@ -120,19 +120,13 @@ int main(int argc,char **argv)
   ierr = VecAssemblyBegin(w);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(w);CHKERRQ(ierr);
 
-  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
-  rbf_interpolation(x,y,g,e,w,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
+//  vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
+  rbf_interpolation(x,y,g,e,sigma,nsigma_box,sigma_buffer,sigma_trunc,&its);
   vorticity_evaluation(x,y,w,x,y,g,sigma,nsigma_box,sigma_buffer,sigma_trunc);
 
   /*
     calculate the L2 norm error
   */
-  PetscScalar *ee,*ww;
-  ierr = VecGetArray(e,&ee);
-  ierr = VecGetArray(g,&ww);
-  for(i=ista; i<iend; i++) {
-    std::cout << i << " "  << ee[i] << " " << ww[i] << std::endl;
-  }
   ierr = VecAXPY(w,-1,e);CHKERRQ(ierr);
   ierr = VecNorm(e,NORM_2,&err);CHKERRQ(ierr);
   ierr = VecNorm(w,NORM_2,&errd);CHKERRQ(ierr);

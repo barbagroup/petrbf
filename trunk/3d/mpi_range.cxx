@@ -1,3 +1,6 @@
+#include <mpi.h>
+#include "par.h"
+
 void mpi_range(MPI2 *mpi)
 {
   int imin,iwork1,iwork2;
