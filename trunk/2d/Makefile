@@ -1,6 +1,6 @@
 NP=1
 LOCDIR=2d
-LIB = -L$(CUDA_INSTALL_PATH)/lib64 -L$(SDK_INSTALL_PATH)/lib -lcudart -lGL -lGLU -lcutil_x86_64 -lstdc++
+LIB = -L$(CUDA_INSTALL_PATH)/lib64 -L$(SDK_INSTALL_PATH)/lib -lcudart -lGL -lGLU -lcutil_x86_64 -lstdc++ -ldl -lm
 
 cpu: main.o rbf_interpolation.o vorticity_evaluation.o mpi_range.o matmult.o
 	${CLINKER} -o main $? ${PETSC_SNES_LIB}
