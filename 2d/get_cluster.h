@@ -9,7 +9,7 @@ class Get_cluster
 {
   int n,ic,id,io,ip,ix,iy,ista,iend,ix_cluster,iy_cluster,j,jc,jd,jsta,jend,jx,jy,jx_min,jx_max,jy_min,jy_max;
   int icall,ncall,nilocal,njlocal,*iplocal,*jplocal,*ipglobal,*jpglobal,*ipoffset,*jpoffset,*idghost;
-  double sort;
+  PetscReal sort;
   MPI2 mpi;
 public:
   void get_cluster(PARTICLE *particle,CLUSTER *cluster)

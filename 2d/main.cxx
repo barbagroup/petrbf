@@ -20,7 +20,7 @@ extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,double,int,int,int,int*)
 int main(int argc,char **argv)
 {
   int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,ni,nj,ista,iend,nlocal;
-  double sigma,overlap,h,xmin,xmax,ymin,ymax,xd,yd,gd,ed,wd,t,err,errd;
+  PetscReal sigma,overlap,h,xmin,xmax,ymin,ymax,xd,yd,gd,ed,wd,t,err,errd;
   clock_t tic,toc;
   tic = std::clock();
 
