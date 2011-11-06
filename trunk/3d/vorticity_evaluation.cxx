@@ -131,9 +131,9 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterCreate(particle.ii,isx,particle.i,isy,&ctx);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.ii,particle.i,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.ii,particle.i,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
-  ierr = ISDestroy(isx);CHKERRQ(ierr);
-  ierr = ISDestroy(isy);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
+  ierr = ISDestroy(&isx);CHKERRQ(ierr);
+  ierr = ISDestroy(&isy);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.i);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.i);CHKERRQ(ierr);
   ierr = VecGetArray(particle.i,&particle.il);CHKERRQ(ierr);
@@ -151,9 +151,9 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterCreate(particle.jj,jsx,particle.j,jsy,&ctx);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.jj,particle.j,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.jj,particle.j,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
-  ierr = ISDestroy(jsx);CHKERRQ(ierr);
-  ierr = ISDestroy(jsy);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
+  ierr = ISDestroy(&jsx);CHKERRQ(ierr);
+  ierr = ISDestroy(&jsy);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.j);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.j);CHKERRQ(ierr);
   ierr = VecGetArray(particle.j,&particle.jl);CHKERRQ(ierr);
@@ -196,7 +196,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterEnd(ctx,zi,particle.zi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,wi,particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,wi,particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
   ierr = VecScatterCreate(xj,jsx,particle.xj,jsy,&ctx);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,xj,particle.xj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,xj,particle.xj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
@@ -206,7 +206,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterEnd(ctx,zj,particle.zj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,gj,particle.gj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,gj,particle.gj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.xi);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.xi);CHKERRQ(ierr);
   ierr = VecAssemblyBegin(particle.yi);CHKERRQ(ierr);
@@ -278,7 +278,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterEnd(ctx,particle.zi,zi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.wi,wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.wi,wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
   ierr = VecScatterCreate(particle.xj,jsy,xj,jsx,&ctx);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.xj,xj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.xj,xj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
@@ -288,7 +288,7 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   ierr = VecScatterEnd(ctx,particle.zj,zj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterBegin(ctx,particle.gj,gj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecScatterEnd(ctx,particle.gj,gj,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
-  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
 
   delete[] isort;
   delete[] jsort;
@@ -317,22 +317,22 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
   delete[] cluster.zjt;
   delete[] cluster.gjt;
 
-  ierr = ISDestroy(isx);CHKERRQ(ierr);
-  ierr = ISDestroy(isy);CHKERRQ(ierr);
-  ierr = ISDestroy(jsx);CHKERRQ(ierr);
-  ierr = ISDestroy(jsy);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.i);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.j);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.ii);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.jj);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.xi);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.yi);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.zi);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.wi);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.xj);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.yj);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.zj);CHKERRQ(ierr);
-  ierr = VecDestroy(particle.gj);CHKERRQ(ierr);
+  ierr = ISDestroy(&isx);CHKERRQ(ierr);
+  ierr = ISDestroy(&isy);CHKERRQ(ierr);
+  ierr = ISDestroy(&jsx);CHKERRQ(ierr);
+  ierr = ISDestroy(&jsy);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.i);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.j);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.ii);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.jj);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.xi);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.yi);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.zi);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.wi);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.xj);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.yj);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.zj);CHKERRQ(ierr);
+  ierr = VecDestroy(&particle.gj);CHKERRQ(ierr);
   ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
   PetscFunctionReturn(0);
 }
