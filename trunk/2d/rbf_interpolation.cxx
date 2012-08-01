@@ -188,14 +188,16 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = MatSetType(M,MATSHELL);CHKERRQ(ierr);
   ierr = MatSetFromOptions(M);CHKERRQ(ierr);
   ierr = MatShellSetOperation(M,MATOP_MULT, (void (*)(void)) mymatmult);
-  ierr = MatView(M,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
   ierr = MatShellSetContext(M,&both);CHKERRQ(ierr);
+  ierr = MatSetUp(M);CHKERRQ(ierr);
+  ierr = MatView(M,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
   ierr = MatCreate(PETSC_COMM_WORLD,&P);CHKERRQ(ierr);
   ierr = MatSetSizes(P,particle.nilocal,particle.nilocal,PETSC_DETERMINE,PETSC_DETERMINE);CHKERRQ(ierr);
   ierr = MatSetType(P,MATSHELL);CHKERRQ(ierr);
   ierr = MatSetFromOptions(P);CHKERRQ(ierr);
   ierr = MatShellSetOperation(P,MATOP_GET_SUBMATRICES, (void (*)(void)) mysubmat);
   ierr = MatShellSetContext(P,&both);CHKERRQ(ierr);
+  ierr = MatSetUp(P);CHKERRQ(ierr);
 
   ierr = VecGetArray(particle.xi,&particle.xil);CHKERRQ(ierr);
   ierr = VecGetArray(particle.yi,&particle.yil);CHKERRQ(ierr);

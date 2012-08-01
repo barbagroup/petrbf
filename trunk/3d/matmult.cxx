@@ -93,6 +93,7 @@ PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatRe
         idx[i] = i;
       }
     }
+    ierr = MatSetUp((*submat)[id]);CHKERRQ(ierr);
     ierr = MatSetValues((*submat)[id],cluster->npbufferi,idx,cluster->npbufferi,idx,A,INSERT_VALUES);CHKERRQ(ierr);
     ierr = MatAssemblyBegin((*submat)[id],MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
     ierr = MatAssemblyEnd((*submat)[id],MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
