@@ -61,12 +61,12 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec zi, Vec gi, Vec wi,
     particle parameters
   */
   particle.sigma = sigma;
-  ierr = VecMin(xi,&particle.xmin);CHKERRQ(ierr);
-  ierr = VecMax(xi,&particle.xmax);CHKERRQ(ierr);
-  ierr = VecMin(yi,&particle.ymin);CHKERRQ(ierr);
-  ierr = VecMax(yi,&particle.ymax);CHKERRQ(ierr);
-  ierr = VecMin(zi,&particle.zmin);CHKERRQ(ierr);
-  ierr = VecMax(zi,&particle.zmax);CHKERRQ(ierr);
+  ierr = VecMin(xi,PETSC_NULL,&particle.xmin);CHKERRQ(ierr);
+  ierr = VecMax(xi,PETSC_NULL,&particle.xmax);CHKERRQ(ierr);
+  ierr = VecMin(yi,PETSC_NULL,&particle.ymin);CHKERRQ(ierr);
+  ierr = VecMax(yi,PETSC_NULL,&particle.ymax);CHKERRQ(ierr);
+  ierr = VecMin(zi,PETSC_NULL,&particle.zmin);CHKERRQ(ierr);
+  ierr = VecMax(zi,PETSC_NULL,&particle.zmax);CHKERRQ(ierr);
 
   /*
     cluster parameters
