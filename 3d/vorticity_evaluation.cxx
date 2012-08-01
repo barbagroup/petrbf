@@ -56,18 +56,18 @@ PetscErrorCode vorticity_evaluation(Vec xi, Vec yi, Vec zi, Vec wi, Vec xj, Vec 
     particle parameters
   */
   particle.sigma = sigma;
-  ierr = VecMin(xi,&ximin);CHKERRQ(ierr);
-  ierr = VecMax(xi,&ximax);CHKERRQ(ierr);
-  ierr = VecMin(yi,&yimin);CHKERRQ(ierr);
-  ierr = VecMax(yi,&yimax);CHKERRQ(ierr);
-  ierr = VecMin(zi,&zimin);CHKERRQ(ierr);
-  ierr = VecMax(zi,&zimax);CHKERRQ(ierr);
-  ierr = VecMin(xj,&xjmin);CHKERRQ(ierr);
-  ierr = VecMax(xj,&xjmax);CHKERRQ(ierr);
-  ierr = VecMin(yj,&yjmin);CHKERRQ(ierr);
-  ierr = VecMax(yj,&yjmax);CHKERRQ(ierr);
-  ierr = VecMin(zj,&zjmin);CHKERRQ(ierr);
-  ierr = VecMax(zj,&zjmax);CHKERRQ(ierr);
+  ierr = VecMin(xi,PETSC_NULL,&ximin);CHKERRQ(ierr);
+  ierr = VecMax(xi,PETSC_NULL,&ximax);CHKERRQ(ierr);
+  ierr = VecMin(yi,PETSC_NULL,&yimin);CHKERRQ(ierr);
+  ierr = VecMax(yi,PETSC_NULL,&yimax);CHKERRQ(ierr);
+  ierr = VecMin(zi,PETSC_NULL,&zimin);CHKERRQ(ierr);
+  ierr = VecMax(zi,PETSC_NULL,&zimax);CHKERRQ(ierr);
+  ierr = VecMin(xj,PETSC_NULL,&xjmin);CHKERRQ(ierr);
+  ierr = VecMax(xj,PETSC_NULL,&xjmax);CHKERRQ(ierr);
+  ierr = VecMin(yj,PETSC_NULL,&yjmin);CHKERRQ(ierr);
+  ierr = VecMax(yj,PETSC_NULL,&yjmax);CHKERRQ(ierr);
+  ierr = VecMin(zj,PETSC_NULL,&zjmin);CHKERRQ(ierr);
+  ierr = VecMax(zj,PETSC_NULL,&zjmax);CHKERRQ(ierr);
   particle.xmin = std::min(ximin,xjmin);
   particle.xmax = std::max(ximax,xjmax);
   particle.ymin = std::min(yimin,yjmin);
