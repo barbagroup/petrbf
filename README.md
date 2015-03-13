@@ -1,4 +1,4 @@
-# petrbf
+# PetRBF
 Many applications in computational science need to approximate a function based on finite data. When the data are in
 a certain sense “scattered” in their domain, one very powerful technique is radial basis function (RBF) interpolation.
 For many years, the wide applicability of RBF interpolation was hindered by its numerical difficulty and expense.
@@ -14,3 +14,5 @@ allows rapid convergence of the iterative solver even when the subdomains in the
 implemented in parallel using the PETSc library (developer version). Numerical experiments demonstrate its capability
 in problems of RBF interpolation with more than 50 million data points, timing at 106 seconds (19 iterations for an
 error tolerance of 10e−15) on 1024 processors of a Blue Gene/L (700 MHz PowerPC processors).
+
+See the paper [PetRBF--A parallel O(N) algorithm for radial basis function interpolation](http://arxiv.org/abs/0909.5413)
