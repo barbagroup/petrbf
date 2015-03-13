@@ -15,4 +15,6 @@ implemented in parallel using the PETSc library (developer version). Numerical e
 in problems of RBF interpolation with more than 50 million data points, timing at 106 seconds (19 iterations for an
 error tolerance of 10e−15) on 1024 processors of a Blue Gene/L (700 MHz PowerPC processors).
 
-See the paper [PetRBF--A parallel O(N) algorithm for radial basis function interpolation](http://arxiv.org/abs/0909.5413)
+See the paper [PetRBF--A parallel O(N) algorithm for radial basis function interpolation](http://arxiv.org/abs/0909.5413) by Rio Yokota, L A Barba, Matthew G Knepley, and visit [The Barba Group page](http://www.bu.edu/tech/support/research/visualization/gallery/petrbf/) for more information.
+
+> We distribute this code under the MIT License, giving potential users the greatest freedom possible. We do, however, request fellow scientists that if they use our codes in research, they kindly include us in the acknowledgement of their papers. We do not request gratuitous citations; only cite our articles if you deem it warranted.
