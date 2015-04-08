@@ -227,8 +227,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   }
   ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRQ(ierr);
   ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
-  ierr = KSPSetOperators(ksp,M,P,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
   ierr = PetscLogEventEnd(ievent[4],0,0,0,0);CHKERRQ(ierr);
+  ierr = KSPSetOperators(ksp,M,P);CHKERRQ(ierr);
   ierr = KSPSolve(ksp,particle.wi,xx);CHKERRQ(ierr);
   ierr = PetscLogEventBegin(ievent[5],0,0,0,0);CHKERRQ(ierr);
   ierr = KSPGetIterationNumber(ksp,its);CHKERRQ(ierr);
