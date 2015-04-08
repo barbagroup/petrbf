@@ -1,15 +1,13 @@
 #include <mpi.h>
-#include <cmath>
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
+
 #include <petscksp.h>
 #include <petscis.h>
 #include <petsclog.h>
 
 #include "par.h"
-#include "get_cluster.h"
 #include "get_buffer.h"
 #include "get_trunc.h"
 #include "get_vorticity.h"
@@ -19,7 +17,7 @@ extern PetscErrorCode rbf_interpolation(Vec,Vec,Vec,Vec,double,int,int,int,int*)
 
 int main(int argc,char **argv)
 {
-  int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,ni,nj,ista,iend,nlocal;
+  int i,its,nsigma_box,sigma_buffer,sigma_trunc,nx,ny,ni,ista,iend;
   PetscReal sigma,overlap,h,xmin,xmax,ymin,ymax,xd,yd,gd,ed,wd,t,err,errd;
   clock_t tic,toc;
   tic = std::clock();
@@ -30,6 +28,11 @@ int main(int argc,char **argv)
 
   PetscErrorCode ierr;
   Vec x,y,g,e,w;
+
+  if (argc < 4) {
+    std::cerr << "Usage: " << argv[0] << " overlap nsigma_box sigma_buffer" << std::endl;
+    return -1;
+  }
 
   PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
   MPI_Comm_size(PETSC_COMM_WORLD,&mpi.nprocs);
@@ -66,10 +69,10 @@ int main(int argc,char **argv)
   /*
     calculate problem size
   */
-  nx = (int)floor((xmax-xmin+epsf)/h)+1;
-  ny = (int)floor((ymax-ymin+epsf)/h)+1;
-  ni = nx*ny;
-  if(mpi.myrank==0) {
+  nx = (int)floor((xmax-xmin+epsf)/h)+1; // number of x particles in overlapping domain
+  ny = (int)floor((ymax-ymin+epsf)/h)+1; // number of y particles in overlapping domain
+  ni = nx*ny;                            // total number of particles
+  if (mpi.myrank==0) {
     printf("||---------------------------------------\n");
     printf("|| number of particles        : %d      \n",ni);
     printf("|| std of Gaussian (sigma)    : %f      \n",sigma);
@@ -79,7 +82,6 @@ int main(int argc,char **argv)
     printf("|| entire domain              : %d sigma\n",(int)floor(2/sigma));
     printf("||---------------------------------------\n");
   }
-  nj = ni;
 
   /*
     generate particles
@@ -92,8 +94,7 @@ int main(int argc,char **argv)
   ierr = VecDuplicate(x,&e);CHKERRQ(ierr);
   ierr = VecDuplicate(x,&w);CHKERRQ(ierr);
   ierr = VecGetOwnershipRange(x,&ista,&iend);CHKERRQ(ierr);
-  nlocal = iend-ista;
-  for(i=ista; i<iend; i++) {
+  for (i=ista; i<iend; i++) {
     xd = xmin+floor(i/ny)*h;
     yd = ymin+(i%ny)*h;
     ed = 0.75*exp(-((9*xd-2)*(9*xd-2)+(9*yd-2)*(9*yd))/4)

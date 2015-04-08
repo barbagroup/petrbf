@@ -18,12 +18,12 @@ extern PetscErrorCode mysubmat(Mat,PetscInt,const IS*,const IS*,MatReuse,Mat**);
  * wi:           Solution of the field at the bases locations.
  * sigma:        Sigma parameter of the gaussian.
  * nsigma_box:   Size of the inner box or 'local box'.
- * sigma buffer: Size of the buffer area.
+ * sigma buffer: Size of the box including buffer area.
  * sigma_trunc:  Truncation point for sigma.
  * its:          Returns solver teration data.
  */
 PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
-  double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
+                                 double sigma, int nsigma_box, int sigma_buffer, int sigma_trunc, int *its)
 {
   int i,ic,id,ista,iend,*isort,ievent[10];
   std::ofstream fid0,fid1;
@@ -51,7 +51,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = PetscLogEventRegister("InitMat",0,&ievent[4]);CHKERRQ(ierr);
   ierr = PetscLogEventRegister("Post Processing",0,&ievent[5]);CHKERRQ(ierr);
 
-  ierr = PetscLogEventBegin(ievent[0],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[0],0,0,0,0);CHKERRQ(ierr); // Begin InitVec
   ierr = MPI_Comm_size(PETSC_COMM_WORLD,&mpi.nprocs);CHKERRQ(ierr);
   ierr = MPI_Comm_rank(PETSC_COMM_WORLD,&mpi.myrank);CHKERRQ(ierr);
   cluster.file = 0;
@@ -82,8 +82,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   particle.nilocal = particle.iend-particle.ista;
   particle.njlocal = particle.jend-particle.jsta;
 
-  ierr = PetscLogEventEnd(ievent[0],0,0,0,0);CHKERRQ(ierr);
-  ierr = PetscLogEventBegin(ievent[1],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[0],0,0,0,0);CHKERRQ(ierr); // End InitVec
+  ierr = PetscLogEventBegin(ievent[1],0,0,0,0);CHKERRQ(ierr); // Begin InitCluster
 
   /*
     generate clusters
@@ -102,8 +102,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = VecRestoreArray(yi,&particle.yjl);CHKERRQ(ierr);
   isort = new int [particle.nilocal];
 
-  ierr = PetscLogEventEnd(ievent[1],0,0,0,0);CHKERRQ(ierr);
-  ierr = PetscLogEventBegin(ievent[2],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[1],0,0,0,0);CHKERRQ(ierr); // End InitCluster
+  ierr = PetscLogEventBegin(ievent[2],0,0,0,0);CHKERRQ(ierr); // Begin InitIS
 
   /*
     generate IS
@@ -122,14 +122,14 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = VecAssemblyBegin(particle.i);CHKERRQ(ierr);
   ierr = VecAssemblyEnd(particle.i);CHKERRQ(ierr);
   ierr = VecGetArray(particle.i,&particle.il);CHKERRQ(ierr);
-  for(i=0; i<particle.nilocal; i++) {
+  for (i=0; i<particle.nilocal; i++) {
     isort[i] = (int) particle.il[i];
   }
   ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nilocal,isort,PETSC_COPY_VALUES,&isx);CHKERRQ(ierr);
   ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
 
-  ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
-  ierr = PetscLogEventBegin(ievent[3],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr); // End InitIS
+  ierr = PetscLogEventBegin(ievent[3],0,0,0,0);CHKERRQ(ierr); // Begin InitGhost
 
   /*
     generate ghost vectors
@@ -138,7 +138,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = VecSetSizes(particle.xi,particle.nilocal,PETSC_DETERMINE);CHKERRQ(ierr);
   ierr = VecSetFromOptions(particle.xi);CHKERRQ(ierr);
   ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.nilocal,PETSC_DECIDE,cluster.nighost,cluster.ighost,
-    &particle.xi);CHKERRQ(ierr);
+                        &particle.xi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.yi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.gi);CHKERRQ(ierr);
   ierr = VecDuplicate(particle.xi,&particle.wi);CHKERRQ(ierr);
@@ -170,8 +170,8 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = VecGhostUpdateBegin(particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
   ierr = VecGhostUpdateEnd(particle.wi,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
 
-  ierr = PetscLogEventEnd(ievent[3],0,0,0,0);CHKERRQ(ierr);
-  ierr = PetscLogEventBegin(ievent[4],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[3],0,0,0,0);CHKERRQ(ierr); // End InitGhost
+  ierr = PetscLogEventBegin(ievent[4],0,0,0,0);CHKERRQ(ierr);  // Begin InitMat
 
   /*
     RBF interpolation
@@ -227,10 +227,11 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   }
   ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRQ(ierr);
   ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
-  ierr = PetscLogEventEnd(ievent[4],0,0,0,0);CHKERRQ(ierr);
+  // ierr = KSPSetOperators(ksp,M,P,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
   ierr = KSPSetOperators(ksp,M,P);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[4],0,0,0,0);CHKERRQ(ierr); // End InitMat
   ierr = KSPSolve(ksp,particle.wi,xx);CHKERRQ(ierr);
-  ierr = PetscLogEventBegin(ievent[5],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[5],0,0,0,0);CHKERRQ(ierr); // Begin Post Processing
   ierr = KSPGetIterationNumber(ksp,its);CHKERRQ(ierr);
 
   ierr = VecRestoreArray(particle.xi,&particle.xil);CHKERRQ(ierr);
@@ -244,7 +245,7 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   cluster.icsta = 0;
   cluster.icend = cluster.nclocal;
   ierr = VecGetArray(xx,&xxx);CHKERRQ(ierr);
-  for(i=particle.ista; i<particle.iend; i++) {
+  for (i=particle.ista; i<particle.iend; i++) {
     ierr = VecSetValues(particle.gi,1,&i,&xxx[i-particle.ista],INSERT_VALUES);CHKERRQ(ierr);
   }
   ierr = VecRestoreArray(xx,&xxx);CHKERRQ(ierr);
@@ -305,6 +306,6 @@ PetscErrorCode rbf_interpolation(Vec xi, Vec yi, Vec gi, Vec wi,
   ierr = VecDestroy(&particle.wi);CHKERRQ(ierr);
   ierr = MatDestroy(&M);CHKERRQ(ierr);
   ierr = MatDestroy(&P);CHKERRQ(ierr);
-  ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr); // End Post Processing
   PetscFunctionReturn(0);
 }
