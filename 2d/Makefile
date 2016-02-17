@@ -22,5 +22,5 @@ save:
 	make purge
 	tar zcvf ../../rbf.tgz ../../rbf
 
-include ${PETSC_DIR}/conf/variables
-include ${PETSC_DIR}/conf/rules
+include ${PETSC_DIR}/lib/petsc/conf/variables
+include ${PETSC_DIR}/lib/petsc/conf/rules
